@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Gesture Recognition</title>
+</head>
+<body>
+    <h1>Gesture Recognition</h1>
+    <!-- Display video feed from the user's camera -->
+    <video id="video" width="640" height="640" autoplay></video>
+    <!-- Hidden canvas element to capture the video frame -->
+    <canvas id="canvas" width="640" height="640" style="display:none;"></canvas>
+    <!-- Button to trigger image capture -->
+    <button id="capture">Capture</button>
+    <!-- Form for uploading the captured image -->
+    <form id="upload-form" action="/upload" method="post" enctype="multipart/form-data">
+        <!-- Hidden input for capturing the image file -->
+        <input type="file" id="file-input" name="image" style="display:none;">
+        <!-- Hidden submit button to automatically submit the form -->
+        <input type="submit" value="Upload" style="display:none;">
+    </form>
+
+    <!-- Display predicted label -->
+    {% if label %}
+    <p>Predicted Label: {{ label }}</p>
+    {% endif %}
+
+    <script>
+        // Access the user's camera
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                // Set the video source to the user's camera feed
+                document.getElementById('video').srcObject = stream;
+            })
+            .catch(err => console.error('Error accessing the camera: ', err));
+
+        // Get references to DOM elements
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+        const captureButton = document.getElementById('capture');
+        const fileInput = document.getElementById('file-input');
+        const uploadForm = document.getElementById('upload-form');
+
+        // Event listener for the capture button
+        captureButton.addEventListener('click', () => {
+            // Draw the current video frame onto the canvas
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            // Convert the canvas content to a Blob (image file)
+            canvas.toBlob((blob) => {
+                // Create a File object from the Blob
+                const file = new File([blob], 'capture.png', { type: 'image/png' });
+                // Create a DataTransfer object to simulate file input
+                const dataTransfer = new DataTransfer();
+                // Add the file to the DataTransfer object
+                dataTransfer.items.add(file);
+                // Set the files property of the file input to the DataTransfer object
+                fileInput.files = dataTransfer.files;
+                // Submit the upload form
+                uploadForm.submit();
+            }, 'image/png');
+        });
+    </script>
+</body>
+</html>
