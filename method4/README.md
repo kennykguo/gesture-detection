@@ -1,0 +1,1 @@
+This folder contains an implementation of the MNIST ASL dataset using a CNN.

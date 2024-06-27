@@ -1,0 +1,1 @@
+This folder contains useful datapreprocessing and dynamic code snippets for camera frame capturing using Flask.

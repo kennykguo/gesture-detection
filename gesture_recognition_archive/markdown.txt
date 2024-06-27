@@ -1,4 +1,0 @@
-If Flask did not close properly,
-
-lsof -i :5000
-kill -9 92954
